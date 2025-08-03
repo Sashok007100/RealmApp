@@ -48,7 +48,7 @@ final class TasksViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TasksCell", for: indexPath)
         var content = cell.defaultContentConfiguration()
-        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
+        let task = task(at: indexPath)
         content.text = task.title
         content.secondaryText = task.note
         cell.contentConfiguration = content
@@ -61,7 +61,7 @@ final class TasksViewController: UITableViewController {
     
     // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
+        let task = task(at: indexPath)
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
             storageManager.delete(task)
@@ -105,7 +105,7 @@ final class TasksViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
+        let task = task(at: indexPath)
         
         showAlert(with: task) {
             tableView.reloadRows(at: [indexPath], with: .automatic)
@@ -147,5 +147,9 @@ extension TasksViewController {
             let rowIndex = IndexPath(row: currentTasks.index(of: task) ?? 0, section: 0)
             tableView.insertRows(at: [rowIndex], with: .automatic)
         }
+    }
+    
+    private func task(at indexPath: IndexPath) -> Task {
+        indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
     }
 }
