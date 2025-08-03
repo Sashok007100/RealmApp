@@ -58,7 +58,51 @@ final class TasksViewController: UITableViewController {
     @objc private func addButtonPressed() {
         showAlert()
     }
-
+    
+    // MARK: - UITableViewDelegate
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
+        
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
+            storageManager.delete(task)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+        
+        let editAction = UIContextualAction(style: .normal, title: "Edit") { [unowned self] _, _, isDone in
+            showAlert(with: task) {
+                tableView.reloadRows(at: [indexPath], with: .automatic)
+            }
+            isDone(true)
+        }
+        
+        let doneTitle = indexPath.section == 0 ? "Done" : "Undone"
+        
+        let doneAction = UIContextualAction(style: .normal, title: doneTitle) { [unowned self] _, _, isDone in
+            storageManager.done(task)
+            
+            let currentTaskIndex = IndexPath(
+                row: currentTasks.index(of: task) ?? 0,
+                section: 0
+            )
+            let completedTaskIndex = IndexPath(
+                row: completedTasks.index(of: task) ?? 0,
+                section: 1
+            )
+            
+            let destinationIndexPath = indexPath.section == 0 ? completedTaskIndex : currentTaskIndex
+            
+            tableView.beginUpdates()
+            tableView.moveRow(at: indexPath, to: destinationIndexPath)
+            tableView.endUpdates()
+            
+            isDone(true)
+        }
+        
+        editAction.backgroundColor = .orange
+        doneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+        
+        return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
+    }
 }
 
 extension TasksViewController {
