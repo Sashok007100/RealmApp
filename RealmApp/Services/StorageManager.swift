@@ -56,7 +56,10 @@ final class StorageManager {
 
     func done(_ taskList: TaskList) {
         write {
-            taskList.tasks.setValue(true, forKey: "isComplete")
+            let allCompleted = taskList.tasks.allSatisfy { $0.isComplete }
+            taskList.tasks.forEach { task in
+                task.isComplete = !allCompleted
+            }
         }
     }
 
