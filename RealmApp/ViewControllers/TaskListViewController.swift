@@ -56,7 +56,7 @@ final class TaskListViewController: UITableViewController {
             content.secondaryText = nil
         default:
             cell.accessoryType = .none
-            content.secondaryText = "\(notDoneCount)"
+            content.secondaryText = taskList.tasks.count.formatted()
         }
 
         cell.contentConfiguration = content
@@ -79,7 +79,10 @@ final class TaskListViewController: UITableViewController {
             isDone(true)
         }
         
-        let doneAction = UIContextualAction(style: .normal, title: "Done") { [unowned self] _, _, isDone in
+        let allCompleted = taskList.tasks.allSatisfy { $0.isComplete }
+        let doneTitle = allCompleted ? "Undone" : "Done"
+        
+        let doneAction = UIContextualAction(style: .normal, title: doneTitle) { [unowned self] _, _, isDone in
             storageManager.done(taskList)
             tableView.reloadRows(at: [indexPath], with: .automatic)
             isDone(true)
