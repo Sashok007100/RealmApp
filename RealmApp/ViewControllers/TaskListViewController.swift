@@ -10,7 +10,7 @@ import UIKit
 import RealmSwift
 
 final class TaskListViewController: UITableViewController {
-
+    
     private var taskLists: Results<TaskList>!
     private let storageManager = StorageManager.shared
     private let dataManager = DataManager.shared
@@ -43,7 +43,22 @@ final class TaskListViewController: UITableViewController {
         var content = cell.defaultContentConfiguration()
         let taskList = taskLists[indexPath.row]
         content.text = taskList.title
-        content.secondaryText = taskList.tasks.count.formatted()
+        
+        let totalTasks = taskList.tasks.count
+        let notDoneCount = taskList.tasks.filter("isComplete == false").count
+        
+        switch (totalTasks, notDoneCount) {
+        case (0, _):
+            cell.accessoryType = .none
+            content.secondaryText = "0"
+        case (_, 0):
+            cell.accessoryType = .checkmark
+            content.secondaryText = nil
+        default:
+            cell.accessoryType = .none
+            content.secondaryText = "\(notDoneCount)"
+        }
+
         cell.contentConfiguration = content
         return cell
     }
@@ -83,7 +98,7 @@ final class TaskListViewController: UITableViewController {
         let taskList = taskLists[indexPath.row]
         tasksVC.taskList = taskList
     }
-
+    
     @IBAction func sortingList(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
