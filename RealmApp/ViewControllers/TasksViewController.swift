@@ -16,7 +16,7 @@ final class TasksViewController: UITableViewController {
     private var currentTasks: Results<Task>!
     private var completedTasks: Results<Task>!
     private let storageManager = StorageManager.shared
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = taskList.title
@@ -76,7 +76,8 @@ extension TasksViewController {
                 style: .default
             ) { [unowned self] taskTitle, taskNote in
                 if let task, let completion {
-                    // TODO: - edit task
+                    storageManager.edit(task, newTitle: taskTitle, newNote: taskNote)
+                    completion()
                     return
                 }
                 createTask(withTitle: taskTitle, andNote: taskNote)
