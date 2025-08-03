@@ -103,6 +103,16 @@ final class TasksViewController: UITableViewController {
         
         return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
+        
+        showAlert(with: task) {
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }
 
 extension TasksViewController {
