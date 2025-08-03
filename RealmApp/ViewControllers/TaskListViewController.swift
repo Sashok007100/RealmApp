@@ -56,7 +56,7 @@ final class TaskListViewController: UITableViewController {
             content.secondaryText = nil
         default:
             cell.accessoryType = .none
-            content.secondaryText = taskList.tasks.count.formatted()
+            content.secondaryText = notDoneCount.formatted()
         }
 
         cell.contentConfiguration = content
