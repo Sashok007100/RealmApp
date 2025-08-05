@@ -58,7 +58,7 @@ final class TaskListViewController: UITableViewController {
             cell.accessoryType = .none
             content.secondaryText = notDoneCount.formatted()
         }
-
+        
         cell.contentConfiguration = content
         return cell
     }
@@ -103,12 +103,9 @@ final class TaskListViewController: UITableViewController {
     }
     
     @IBAction func sortingList(_ sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            taskLists = taskLists.sorted(byKeyPath: "date", ascending: true)
-        default:
-            taskLists = taskLists.sorted(byKeyPath: "title", ascending: true)
-        }
+        taskLists = sender.selectedSegmentIndex == 0 ?
+            taskLists.sorted(byKeyPath: "date", ascending: true) :
+            taskLists.sorted(byKeyPath: "title", ascending: true)
         
         tableView.reloadData()
     }
